@@ -1,0 +1,87 @@
+name: Build
+
+on: workflow_dispatch
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  Windows-x64:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: apt install
+      run: |
+        sudo apt-get update
+        sudo apt-get install mingw-w64 -y
+    - name: Add tool chain
+      run: rustup target add x86_64-pc-windows-gnu
+    - name: Build
+      run: cargo build --target x86_64-pc-windows-gnu --release --verbose
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Aida64-Keys-Windows-x64
+        path: |
+          target/x86_64-pc-windows-gnu/release/aida64-keys-gui.exe
+          target/x86_64-pc-windows-gnu/release/aida64-keys-cli.exe
+          
+  Windows-x86:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: apt install
+      run: |
+        sudo apt-get update
+        sudo apt-get install mingw-w64 -y
+    - name: Add tool chain
+      run: rustup target add i686-pc-windows-gnu
+    - name: Build
+      run: cargo build --target i686-pc-windows-gnu --release --verbose
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Aida64-Keys-Windows-x86
+        path: |
+          target/i686-pc-windows-gnu/release/aida64-keys-gui.exe
+          target/i686-pc-windows-gnu/release/aida64-keys-cli.exe
+
+  Linux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: apt install
+      run: |
+        sudo apt-get update
+        sudo apt-get install pkg-config cmake build-essential libxcb-composite0-dev libfontconfig1-dev -y
+    - name: Build
+      run: cargo build --release --verbose
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Aida64-Keys-Linux
+        path: |
+          target/release/aida64-keys-gui
+          target/release/aida64-keys-cli
+          
+  MacOS:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --release --verbose
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Aida64-Keys-MacOS
+        path: |
+          target/release/aida64-keys-gui
+          target/release/aida64-keys-cli
